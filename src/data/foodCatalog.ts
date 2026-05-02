@@ -90,8 +90,10 @@ export const FOOD_CATALOG: FoodItem[] = [
   { id: 'lentils', nameHe: 'עדשים', emoji: '🫘', category: 'green', group: 'protein' },
   { id: 'chickpeas', nameHe: 'חומוס גרגירים', emoji: '🫛', category: 'green', group: 'protein' },
 
-  // ירוק — חלב
+  // ירוק — חלב ותחליפי חלב (שניהם נספרים תחת "חלב" ביעד היומי)
   { id: 'milk', nameHe: 'חלב', emoji: '🥛', category: 'green', group: 'dairy' },
+  { id: 'oat-milk', nameHe: 'חלב שיבולת שועל', emoji: '🌾', category: 'green', group: 'dairy' },
+  { id: 'soy-milk', nameHe: 'חלב סויה', emoji: '🫘', category: 'green', group: 'dairy' },
   { id: 'yogurt-plain', nameHe: 'יוגורט טבעי', emoji: '🍦', category: 'green', group: 'dairy' },
   { id: 'cottage', nameHe: 'קוטג׳', emoji: '🧀', category: 'green', group: 'dairy' },
   { id: 'white-cheese', nameHe: 'גבינה לבנה', emoji: '🧀', category: 'green', group: 'dairy' },
