@@ -67,14 +67,17 @@ export const FOOD_CATALOG: FoodItem[] = [
 
   // כתום — דגנים
   { id: 'white-bread', nameHe: 'לחם לבן', emoji: '🍞', category: 'orange', group: 'grain' },
+  { id: 'bun', nameHe: 'לחמנייה', emoji: '🥖', category: 'orange', group: 'grain' },
   { id: 'pita', nameHe: 'פיתה', emoji: '🫓', category: 'orange', group: 'grain' },
   { id: 'pasta', nameHe: 'פסטה', emoji: '🍝', category: 'orange', group: 'grain' },
+  { id: 'noodles', nameHe: 'נודלס', emoji: '🍜', category: 'orange', group: 'grain' },
   { id: 'rice', nameHe: 'אורז לבן', emoji: '🍚', category: 'orange', group: 'grain' },
   { id: 'cornflakes', nameHe: 'קורנפלקס', emoji: '🥣', category: 'orange', group: 'grain' },
   { id: 'cracker', nameHe: 'קרקרים', emoji: '🍘', category: 'orange', group: 'grain' },
 
   // כתום — חלבון
   { id: 'schnitzel', nameHe: 'שניצל', emoji: '🍗', category: 'orange', group: 'protein' },
+  { id: 'sausage', nameHe: 'נקניקייה', emoji: '🌭', category: 'orange', group: 'protein' },
   { id: 'meatballs', nameHe: 'קציצות', emoji: '🍡', category: 'orange', group: 'protein' },
   { id: 'hamburger', nameHe: 'המבורגר', emoji: '🍔', category: 'orange', group: 'protein' },
   { id: 'shawarma', nameHe: 'שווארמה', emoji: '🌯', category: 'orange', group: 'protein' },
