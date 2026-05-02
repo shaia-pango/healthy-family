@@ -10,7 +10,7 @@ export function Home() {
   }
 
   return (
-    <div className="px-4 pt-6 pb-40 max-w-2xl mx-auto">
+    <div className="px-4 pt-6 pb-48 max-w-2xl mx-auto">
       <header className="mb-6 text-center">
         <h1 className="text-3xl font-black text-brand-700">המשפחה הבריאה 🌱</h1>
         <p className="text-gray-600 mt-1">בחרו מי אכל ומה אכל</p>
@@ -22,12 +22,13 @@ export function Home() {
         ))}
       </div>
 
-      <div className="fixed bottom-24 inset-x-0 mx-auto px-4 max-w-2xl flex justify-center gap-3">
+      <div className="fixed bottom-24 inset-x-0 mx-auto px-4 max-w-2xl flex justify-center items-center gap-3">
         <Link
           to="/bonus"
-          className="bg-amber-500 text-white font-black px-5 py-3 rounded-full shadow-2xl active:scale-95 transition no-tap-highlight"
+          aria-label="פעולה מיוחדת"
+          className="bg-amber-500 text-white grid place-items-center w-16 h-16 rounded-full shadow-2xl active:scale-95 transition no-tap-highlight text-3xl"
         >
-          🌟 פעולה
+          🌟
         </Link>
         <Link
           to="/log"
