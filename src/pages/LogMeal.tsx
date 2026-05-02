@@ -5,15 +5,16 @@ import { useFamilyStore } from '../store/familyStore';
 import { FOOD_CATALOG, CATEGORY_LABELS, CATEGORY_EMOJI, type FoodCategory, type FoodItem } from '../data/foodCatalog';
 import { FoodIcon } from '../components/FoodIcon';
 import { QuantityPicker } from '../components/QuantityPicker';
-import { scoreItems } from '../lib/scoring';
+import { scoreMeal, summarizeDay } from '../lib/scoring';
 import { PET_EMOJIS, stageForPoints } from '../data/pets';
 import { MEALS, MEAL_EMOJI, type MealType } from '../data/meals';
+import { defaultFrameForAge } from '../data/frames';
 
 type Step = 'who' | 'meal' | 'category' | 'pick' | 'done';
 
 export function LogMeal() {
   const nav = useNavigate();
-  const { members, addLog } = useFamilyStore();
+  const { members, addMealLog, todayMealItemsFor, frameFor } = useFamilyStore();
   const [step, setStep] = useState<Step>('who');
   const [memberId, setMemberId] = useState<string>('');
   const [meal, setMeal] = useState<MealType>('בוקר');
@@ -34,7 +35,14 @@ export function LogMeal() {
     [counts],
   );
 
-  const livePreview = scoreItems(pickedIds);
+  const livePreview = useMemo(() => {
+    if (!member) return { perItem: 0, categoryBonuses: 0, fullDayBonus: 0, total: 0, newlyCompletedGroups: [], fullDayCompleted: false };
+    const frame = member.frame ?? defaultFrameForAge(member.age);
+    const dayItems = todayMealItemsFor(member.id);
+    const dayCounts = summarizeDay(dayItems);
+    const fullDayAlreadyAwarded = Object.entries(frame).every(([g, t]) => (dayCounts[g] ?? 0) >= t);
+    return scoreMeal(pickedIds, frame, { groupCounts: dayCounts, fullDayAlreadyAwarded });
+  }, [pickedIds, member, todayMealItemsFor]);
 
   const handleFoodTap = (item: FoodItem) => {
     if (counts[item.id]) {
@@ -66,10 +74,13 @@ export function LogMeal() {
 
   const finish = async () => {
     if (!memberId || pickedIds.length === 0) return;
-    const result = await addLog({ memberId, mealType: meal, itemIds: pickedIds });
+    const result = await addMealLog({ memberId, mealType: meal, itemIds: pickedIds });
     setPoints(result.pointsEarned);
     setStep('done');
   };
+
+  // suppress unused warning — frameFor is exposed for parity but recomputed inline
+  void frameFor;
 
   if (step === 'who') {
     return (
@@ -166,9 +177,14 @@ export function LogMeal() {
           <div className="bg-white rounded-3xl shadow-2xl p-3 flex items-center gap-3 border-2 border-brand-200">
             <div className="flex-1">
               <div className="text-xs text-gray-500">סך נקודות</div>
-              <div className="font-black text-2xl text-brand-600">+{livePreview.total}</div>
-              {livePreview.bonus > 0 && (
-                <div className="text-xs text-emerald-600 font-bold">🎯 בונוס ארוחה מאוזנת!</div>
+              <div className={`font-black text-2xl ${livePreview.total >= 0 ? 'text-brand-600' : 'text-rose-600'}`}>
+                {livePreview.total >= 0 ? '+' : ''}{livePreview.total}
+              </div>
+              {livePreview.categoryBonuses > 0 && (
+                <div className="text-xs text-emerald-600 font-bold">🎯 השלמת קטגוריה +{livePreview.categoryBonuses}</div>
+              )}
+              {livePreview.fullDayBonus > 0 && (
+                <div className="text-xs text-amber-600 font-bold">🏆 יום מאוזן +{livePreview.fullDayBonus}!</div>
               )}
             </div>
             <div className="flex gap-1 max-w-[40%] overflow-x-auto">
@@ -218,7 +234,9 @@ export function LogMeal() {
           {member ? PET_EMOJIS[member.petType][stage] : '🎉'}
         </motion.div>
       </AnimatePresence>
-      <div className="text-3xl font-black text-brand-700">+{points} נקודות!</div>
+      <div className={`text-3xl font-black ${points >= 0 ? 'text-brand-700' : 'text-rose-600'}`}>
+        {points >= 0 ? '+' : ''}{points} נקודות
+      </div>
       <div className="text-lg text-gray-600 mt-2">
         {member?.petName} שמח/ה ❤️
       </div>

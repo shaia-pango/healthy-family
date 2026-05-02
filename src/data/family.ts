@@ -1,4 +1,5 @@
 import type { PetType } from './pets';
+import type { DailyFrame } from './frames';
 
 export type FamilyMember = {
   id: string;
@@ -8,6 +9,7 @@ export type FamilyMember = {
   petType: PetType;
   petName: string;
   color: string;
+  frame?: DailyFrame;   // אם לא מוגדר, משתמשים בברירת מחדל לפי גיל
 };
 
 export const INITIAL_FAMILY: FamilyMember[] = [

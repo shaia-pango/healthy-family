@@ -8,6 +8,8 @@ import { Pet } from './pages/Pet';
 import { Leaderboard } from './pages/Leaderboard';
 import { Settings } from './pages/Settings';
 import { Onboarding } from './pages/Onboarding';
+import { BonusActions } from './pages/BonusActions';
+import { FrameSettings } from './pages/FrameSettings';
 import { isSupabaseConfigured } from './lib/supabase';
 import './App.css';
 
@@ -54,7 +56,9 @@ VITE_SUPABASE_ANON_KEY=YOUR-ANON-KEY`}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/log" element={<LogMeal />} />
+        <Route path="/bonus" element={<BonusActions />} />
         <Route path="/pet/:memberId" element={<Pet />} />
+        <Route path="/frame/:memberId" element={<FrameSettings />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>
