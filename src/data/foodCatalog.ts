@@ -15,14 +15,15 @@ export type FoodItem = {
 };
 
 // קטגוריות תצוגה בפיקר (מסכמות יחד group+category לכלים נוחים יותר)
-export type DisplayCategory = 'produce' | 'carbs' | 'protein' | 'naughty';
+export type DisplayCategory = 'produce' | 'carbs' | 'protein' | 'naughty' | 'drinks';
 
-export const DISPLAY_CATEGORIES: DisplayCategory[] = ['produce', 'carbs', 'protein', 'naughty'];
+export const DISPLAY_CATEGORIES: DisplayCategory[] = ['produce', 'carbs', 'protein', 'drinks', 'naughty'];
 
 export const DISPLAY_CATEGORY_LABELS: Record<DisplayCategory, string> = {
   produce: 'ירקות ופירות',
   carbs: 'דגנים ופחמימות',
   protein: 'חלבונים',
+  drinks: 'שתייה',
   naughty: 'שובבים',
 };
 
@@ -30,18 +31,16 @@ export const DISPLAY_CATEGORY_EMOJI: Record<DisplayCategory, string> = {
   produce: '🥗',
   carbs: '🍞',
   protein: '🍗',
+  drinks: '🥤',
   naughty: '🍭',
 };
 
 export function displayCategoryOf(food: FoodItem): DisplayCategory {
+  if (food.group === 'drink') return 'drinks';   // כל המשקאות נכנסים לקטגוריית שתייה
   if (food.group === 'fruit' || food.group === 'vegetable') return 'produce';
   if (food.group === 'grain') return 'carbs';
   if (food.group === 'protein' || food.group === 'dairy') return 'protein';
   if (food.group === 'snack' || food.group === 'sweet') return 'naughty';
-  // drinks: מים → produce, מיץ/קולה → naughty
-  if (food.group === 'drink') {
-    return food.category === 'green' ? 'produce' : 'naughty';
-  }
   return 'naughty';
 }
 
@@ -105,8 +104,10 @@ export const FOOD_CATALOG: FoodItem[] = [
   { id: 'oatmeal', nameHe: 'דייסת שיבולת שועל', emoji: '🥣', category: 'green', group: 'grain' },
   { id: 'brown-rice', nameHe: 'אורז מלא', emoji: '🍚', category: 'green', group: 'grain' },
 
-  // ירוק — שתייה
+  // שתייה — מים נחשבים ירוק (תורם ליעד היומי), קפה/תה ניטרליים, אלכוהול אדום
   { id: 'water', nameHe: 'מים', emoji: '💧', category: 'green', group: 'drink' },
+  { id: 'coffee', nameHe: 'קפה', emoji: '☕', category: 'orange', group: 'drink' },
+  { id: 'tea', nameHe: 'תה', emoji: '🍵', category: 'orange', group: 'drink' },
 
   // כתום — דגנים
   { id: 'white-bread', nameHe: 'לחם לבן', emoji: '🍞', category: 'orange', group: 'grain' },
@@ -162,6 +163,9 @@ export const FOOD_CATALOG: FoodItem[] = [
   { id: 'soda', nameHe: 'קולה', emoji: '🥤', category: 'red', group: 'drink' },
   { id: 'energy', nameHe: 'משקה אנרגיה', emoji: '🥤', category: 'red', group: 'drink' },
   { id: 'choco', nameHe: 'שוקו', emoji: '🍫', category: 'red', group: 'drink' },
+  { id: 'beer', nameHe: 'בירה', emoji: '🍺', category: 'red', group: 'drink' },
+  { id: 'wine', nameHe: 'יין', emoji: '🍷', category: 'red', group: 'drink' },
+  { id: 'arak', nameHe: 'ערק', emoji: '🥃', category: 'red', group: 'drink' },
 ];
 
 export const FOOD_BY_ID: Record<string, FoodItem> = Object.fromEntries(

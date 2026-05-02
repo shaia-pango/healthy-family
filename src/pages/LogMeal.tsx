@@ -147,19 +147,19 @@ export function LogMeal() {
   if (step === 'pick') {
     return (
       <div className="px-4 pt-4 pb-40 max-w-2xl mx-auto">
-        <div className="grid grid-cols-2 gap-2 mb-4 sticky top-0 bg-[#fef3e7] z-10 py-2">
+        <div className="grid grid-cols-5 gap-1.5 mb-4 sticky top-0 bg-[#fef3e7] z-10 py-2">
           {DISPLAY_CATEGORIES.map((c) => (
             <button
               key={c}
               onClick={() => setCategory(c)}
-              className={`py-3 rounded-2xl font-black text-sm transition no-tap-highlight flex items-center justify-center gap-1 ${
+              className={`py-2 px-1 rounded-xl font-bold text-[10px] leading-tight transition no-tap-highlight flex flex-col items-center gap-1 ${
                 category === c
                   ? 'bg-brand-500 text-white shadow-lg scale-105'
                   : 'bg-white text-gray-700'
               }`}
             >
               <span className="text-xl">{DISPLAY_CATEGORY_EMOJI[c]}</span>
-              <span>{DISPLAY_CATEGORY_LABELS[c]}</span>
+              <span className="text-center">{DISPLAY_CATEGORY_LABELS[c]}</span>
             </button>
           ))}
         </div>

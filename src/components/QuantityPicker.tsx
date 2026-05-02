@@ -98,7 +98,10 @@ export function QuantityPicker({ item, onConfirm, onCancel }: Props) {
                           : 'bg-gray-100 text-gray-700'
                       }`}
                     >
-                      בלבד
+                      {/* "עם לחמנייה" → "בלי לחמנייה"; אחרת fallback */}
+                      {item.combos[0].label.startsWith('עם ')
+                        ? item.combos[0].label.replace(/^עם /, 'בלי ')
+                        : 'בלבד'}
                     </button>
                     {item.combos.map((c) => (
                       <button
