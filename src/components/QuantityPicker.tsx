@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Minus, Plus } from 'lucide-react';
 import type { FoodItem } from '../data/foodCatalog';
 
 type Props = {
@@ -8,7 +9,7 @@ type Props = {
   onCancel: () => void;
 };
 
-const OPTIONS = [1, 2, 3, 4, 5, 6];
+const MAX_QTY = 20;
 
 export function QuantityPicker({ item, onConfirm, onCancel }: Props) {
   const [qty, setQty] = useState(1);
@@ -16,6 +17,9 @@ export function QuantityPicker({ item, onConfirm, onCancel }: Props) {
   useEffect(() => {
     if (item) setQty(1);
   }, [item]);
+
+  const dec = () => setQty((q) => Math.max(1, q - 1));
+  const inc = () => setQty((q) => Math.min(MAX_QTY, q + 1));
 
   return (
     <AnimatePresence>
@@ -40,23 +44,36 @@ export function QuantityPicker({ item, onConfirm, onCancel }: Props) {
               <div className="text-center">
                 <div className="text-7xl mb-2">{item.emoji}</div>
                 <div className="font-black text-2xl mb-1">{item.nameHe}</div>
-                <div className="text-gray-500 mb-5">כמה אכלת?</div>
+                <div className="text-gray-500 mb-6">כמה אכלת?</div>
               </div>
 
-              <div className="grid grid-cols-3 gap-3 mb-5">
-                {OPTIONS.map((n) => (
-                  <button
-                    key={n}
-                    onClick={() => setQty(n)}
-                    className={`aspect-square rounded-2xl font-black text-3xl transition active:scale-90 no-tap-highlight ${
-                      qty === n
-                        ? 'bg-brand-500 text-white shadow-lg scale-105'
-                        : 'bg-gray-100 text-gray-700'
-                    }`}
-                  >
-                    {n}
-                  </button>
-                ))}
+              <div className="flex items-center justify-between mb-8 px-2">
+                <button
+                  onClick={dec}
+                  disabled={qty <= 1}
+                  aria-label="הפחת"
+                  className="w-20 h-20 rounded-full bg-gray-100 grid place-items-center text-gray-700 active:scale-90 transition disabled:opacity-30 no-tap-highlight"
+                >
+                  <Minus size={40} strokeWidth={3} />
+                </button>
+
+                <motion.div
+                  key={qty}
+                  initial={{ scale: 0.7, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="font-black text-7xl text-brand-600 min-w-[80px] text-center tabular-nums"
+                >
+                  {qty}
+                </motion.div>
+
+                <button
+                  onClick={inc}
+                  disabled={qty >= MAX_QTY}
+                  aria-label="הוסף"
+                  className="w-20 h-20 rounded-full bg-brand-500 grid place-items-center text-white active:scale-90 transition disabled:opacity-30 shadow-lg no-tap-highlight"
+                >
+                  <Plus size={40} strokeWidth={3} />
+                </button>
               </div>
 
               <div className="flex gap-3">
