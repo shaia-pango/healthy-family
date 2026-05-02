@@ -22,7 +22,10 @@ export function Home() {
         ))}
       </div>
 
-      <div className="fixed bottom-24 inset-x-0 mx-auto px-4 max-w-2xl flex justify-center items-center gap-3">
+      <div
+        className="fixed inset-x-0 mx-auto px-4 max-w-2xl flex justify-center items-center gap-3 z-30"
+        style={{ bottom: 'calc(env(safe-area-inset-bottom) + 5.5rem)' }}
+      >
         <Link
           to="/bonus"
           aria-label="פעולה מיוחדת"
