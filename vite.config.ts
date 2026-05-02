@@ -8,6 +8,11 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'icons/icon.svg'],
+      workbox: {
+        skipWaiting: true,                  // SW חדש משתלט מיד בלי להמתין
+        clientsClaim: true,                 // לוקח שליטה על טאבים פתוחים
+        cleanupOutdatedCaches: true,
+      },
       manifest: {
         name: 'המשפחה הבריאה',
         short_name: 'בריאים',
