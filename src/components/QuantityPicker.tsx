@@ -5,7 +5,7 @@ import type { FoodItem } from '../data/foodCatalog';
 
 type Props = {
   item: FoodItem | null;
-  onConfirm: (qty: number) => void;
+  onConfirm: (qty: number, comboIds: string[]) => void;
   onCancel: () => void;
 };
 
@@ -13,13 +13,23 @@ const MAX_QTY = 20;
 
 export function QuantityPicker({ item, onConfirm, onCancel }: Props) {
   const [qty, setQty] = useState(1);
+  const [selectedCombos, setSelectedCombos] = useState<string[]>([]);
 
   useEffect(() => {
-    if (item) setQty(1);
+    if (item) {
+      setQty(1);
+      setSelectedCombos([]);
+    }
   }, [item]);
 
   const dec = () => setQty((q) => Math.max(1, q - 1));
   const inc = () => setQty((q) => Math.min(MAX_QTY, q + 1));
+
+  const toggleCombo = (comboId: string) => {
+    setSelectedCombos((cur) =>
+      cur.includes(comboId) ? cur.filter((c) => c !== comboId) : [...cur, comboId],
+    );
+  };
 
   return (
     <AnimatePresence>
@@ -44,10 +54,10 @@ export function QuantityPicker({ item, onConfirm, onCancel }: Props) {
               <div className="text-center">
                 <div className="text-7xl mb-2">{item.emoji}</div>
                 <div className="font-black text-2xl mb-1">{item.nameHe}</div>
-                <div className="text-gray-500 mb-6">כמה אכלת?</div>
+                <div className="text-gray-500 mb-5">כמה אכלת?</div>
               </div>
 
-              <div className="flex items-center justify-between mb-8 px-2">
+              <div className="flex items-center justify-between mb-6 px-2">
                 <button
                   onClick={dec}
                   disabled={qty <= 1}
@@ -76,6 +86,37 @@ export function QuantityPicker({ item, onConfirm, onCancel }: Props) {
                 </button>
               </div>
 
+              {item.combos && item.combos.length > 0 && (
+                <div className="mb-5">
+                  <div className="text-sm text-gray-500 mb-2 text-center">איך אכלת?</div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => setSelectedCombos([])}
+                      className={`py-3 rounded-2xl font-bold text-sm transition no-tap-highlight ${
+                        selectedCombos.length === 0
+                          ? 'bg-brand-500 text-white shadow-lg'
+                          : 'bg-gray-100 text-gray-700'
+                      }`}
+                    >
+                      בלבד
+                    </button>
+                    {item.combos.map((c) => (
+                      <button
+                        key={c.id}
+                        onClick={() => toggleCombo(c.id)}
+                        className={`py-3 rounded-2xl font-bold text-sm transition no-tap-highlight ${
+                          selectedCombos.includes(c.id)
+                            ? 'bg-brand-500 text-white shadow-lg'
+                            : 'bg-gray-100 text-gray-700'
+                        }`}
+                      >
+                        {c.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="flex gap-3">
                 <button
                   onClick={onCancel}
@@ -84,7 +125,7 @@ export function QuantityPicker({ item, onConfirm, onCancel }: Props) {
                   ביטול
                 </button>
                 <button
-                  onClick={() => onConfirm(qty)}
+                  onClick={() => onConfirm(qty, selectedCombos)}
                   className="flex-1 bg-brand-500 text-white font-black py-4 rounded-2xl shadow-lg active:scale-95"
                 >
                   אישור ✓

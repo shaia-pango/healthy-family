@@ -1,12 +1,49 @@
 export type FoodCategory = 'green' | 'orange' | 'red';
 
+export type FoodCombo = {
+  id: string;       // FK ל-FoodItem אחר שיתווסף לארוחה כשבוחרים את הקומבו
+  label: string;    // מה כתוב על הכפתור בפיקר (למשל "עם לחמנייה")
+};
+
 export type FoodItem = {
   id: string;
   nameHe: string;
   emoji: string;
   category: FoodCategory;
   group: FoodGroup;
+  combos?: FoodCombo[];   // אופציונלי — למשל המבורגר עם לחמנייה
 };
+
+// קטגוריות תצוגה בפיקר (מסכמות יחד group+category לכלים נוחים יותר)
+export type DisplayCategory = 'produce' | 'carbs' | 'protein' | 'naughty';
+
+export const DISPLAY_CATEGORIES: DisplayCategory[] = ['produce', 'carbs', 'protein', 'naughty'];
+
+export const DISPLAY_CATEGORY_LABELS: Record<DisplayCategory, string> = {
+  produce: 'ירקות ופירות',
+  carbs: 'דגנים ופחמימות',
+  protein: 'חלבונים',
+  naughty: 'שובבים',
+};
+
+export const DISPLAY_CATEGORY_EMOJI: Record<DisplayCategory, string> = {
+  produce: '🥗',
+  carbs: '🍞',
+  protein: '🍗',
+  naughty: '🍭',
+};
+
+export function displayCategoryOf(food: FoodItem): DisplayCategory {
+  if (food.group === 'fruit' || food.group === 'vegetable') return 'produce';
+  if (food.group === 'grain') return 'carbs';
+  if (food.group === 'protein' || food.group === 'dairy') return 'protein';
+  if (food.group === 'snack' || food.group === 'sweet') return 'naughty';
+  // drinks: מים → produce, מיץ/קולה → naughty
+  if (food.group === 'drink') {
+    return food.category === 'green' ? 'produce' : 'naughty';
+  }
+  return 'naughty';
+}
 
 export type FoodGroup =
   | 'fruit'
@@ -81,9 +118,11 @@ export const FOOD_CATALOG: FoodItem[] = [
 
   // כתום — חלבון
   { id: 'schnitzel', nameHe: 'שניצל', emoji: '🍗', category: 'orange', group: 'protein' },
-  { id: 'sausage', nameHe: 'נקניקייה', emoji: '🌭', category: 'orange', group: 'protein' },
+  { id: 'sausage', nameHe: 'נקניקייה', emoji: '🌭', category: 'orange', group: 'protein',
+    combos: [{ id: 'bun', label: 'עם לחמנייה' }] },
   { id: 'meatballs', nameHe: 'קציצות', emoji: '🍡', category: 'orange', group: 'protein' },
-  { id: 'hamburger', nameHe: 'המבורגר', emoji: '🍔', category: 'orange', group: 'protein' },
+  { id: 'hamburger', nameHe: 'המבורגר', emoji: '🍔', category: 'orange', group: 'protein',
+    combos: [{ id: 'bun', label: 'עם לחמנייה' }] },
   { id: 'shawarma', nameHe: 'שווארמה', emoji: '🌯', category: 'orange', group: 'protein' },
 
   // כתום — חלב

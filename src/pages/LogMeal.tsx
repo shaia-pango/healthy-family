@@ -2,7 +2,15 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useFamilyStore } from '../store/familyStore';
-import { FOOD_CATALOG, CATEGORY_LABELS, CATEGORY_EMOJI, type FoodCategory, type FoodItem } from '../data/foodCatalog';
+import {
+  FOOD_CATALOG,
+  DISPLAY_CATEGORIES,
+  DISPLAY_CATEGORY_LABELS,
+  DISPLAY_CATEGORY_EMOJI,
+  displayCategoryOf,
+  type DisplayCategory,
+  type FoodItem,
+} from '../data/foodCatalog';
 import { FoodIcon } from '../components/FoodIcon';
 import { QuantityPicker } from '../components/QuantityPicker';
 import { scoreMeal, summarizeDay } from '../lib/scoring';
@@ -10,7 +18,7 @@ import { PET_EMOJIS, stageForPoints } from '../data/pets';
 import { MEALS, MEAL_EMOJI, type MealType } from '../data/meals';
 import { defaultFrameForAge } from '../data/frames';
 
-type Step = 'who' | 'meal' | 'category' | 'pick' | 'done';
+type Step = 'who' | 'meal' | 'pick' | 'done';
 
 export function LogMeal() {
   const nav = useNavigate();
@@ -18,7 +26,7 @@ export function LogMeal() {
   const [step, setStep] = useState<Step>('who');
   const [memberId, setMemberId] = useState<string>('');
   const [meal, setMeal] = useState<MealType>('בוקר');
-  const [category, setCategory] = useState<FoodCategory>('green');
+  const [category, setCategory] = useState<DisplayCategory>('produce');
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [points, setPoints] = useState(0);
   const [pickerItem, setPickerItem] = useState<FoodItem | null>(null);
@@ -26,7 +34,7 @@ export function LogMeal() {
   const member = members.find((m) => m.id === memberId);
 
   const filteredFoods = useMemo(
-    () => FOOD_CATALOG.filter((f) => f.category === category),
+    () => FOOD_CATALOG.filter((f) => displayCategoryOf(f) === category),
     [category],
   );
 
@@ -58,9 +66,16 @@ export function LogMeal() {
     }
   };
 
-  const confirmQuantity = (qty: number) => {
+  const confirmQuantity = (qty: number, comboIds: string[]) => {
     if (!pickerItem) return;
-    setCounts((c) => ({ ...c, [pickerItem.id]: qty }));
+    setCounts((c) => {
+      const next = { ...c, [pickerItem.id]: qty };
+      // קומבו (לדוגמה: לחמנייה למבורגר) — מוסיפים את אותה כמות מהפריט המשני
+      for (const cid of comboIds) {
+        next[cid] = (next[cid] ?? 0) + qty;
+      }
+      return next;
+    });
     setPickerItem(null);
   };
 
@@ -129,28 +144,22 @@ export function LogMeal() {
     );
   }
 
-  if (step === 'category' || step === 'pick') {
+  if (step === 'pick') {
     return (
       <div className="px-4 pt-4 pb-40 max-w-2xl mx-auto">
-        <div className="flex gap-2 mb-4 sticky top-0 bg-[#fef3e7] z-10 py-2">
-          {(['green', 'orange', 'red'] as FoodCategory[]).map((c) => (
+        <div className="grid grid-cols-2 gap-2 mb-4 sticky top-0 bg-[#fef3e7] z-10 py-2">
+          {DISPLAY_CATEGORIES.map((c) => (
             <button
               key={c}
-              onClick={() => {
-                setCategory(c);
-                setStep('pick');
-              }}
-              className={`flex-1 py-3 rounded-2xl font-black text-base transition no-tap-highlight ${
-                category === c && step === 'pick'
-                  ? c === 'green'
-                    ? 'bg-emerald-500 text-white shadow-lg scale-105'
-                    : c === 'orange'
-                      ? 'bg-orange-500 text-white shadow-lg scale-105'
-                      : 'bg-rose-500 text-white shadow-lg scale-105'
+              onClick={() => setCategory(c)}
+              className={`py-3 rounded-2xl font-black text-sm transition no-tap-highlight flex items-center justify-center gap-1 ${
+                category === c
+                  ? 'bg-brand-500 text-white shadow-lg scale-105'
                   : 'bg-white text-gray-700'
               }`}
             >
-              {CATEGORY_EMOJI[c]} {CATEGORY_LABELS[c]}
+              <span className="text-xl">{DISPLAY_CATEGORY_EMOJI[c]}</span>
+              <span>{DISPLAY_CATEGORY_LABELS[c]}</span>
             </button>
           ))}
         </div>
