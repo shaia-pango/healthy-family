@@ -43,7 +43,9 @@ export const FOOD_CATALOG: FoodItem[] = [
   { id: 'eggplant', nameHe: 'חציל', emoji: '🍆', category: 'green', group: 'vegetable' },
 
   // ירוק — חלבון
-  { id: 'egg', nameHe: 'ביצה', emoji: '🥚', category: 'green', group: 'protein' },
+  { id: 'egg', nameHe: 'ביצה קשה', emoji: '🥚', category: 'green', group: 'protein' },
+  { id: 'omelette', nameHe: 'חביתה', emoji: '🍳', category: 'green', group: 'protein' },
+  { id: 'sunny-egg', nameHe: 'ביצת עין', emoji: '🍳', category: 'green', group: 'protein' },
   { id: 'chicken', nameHe: 'חזה עוף', emoji: '🍗', category: 'green', group: 'protein' },
   { id: 'fish', nameHe: 'דג', emoji: '🐟', category: 'green', group: 'protein' },
   { id: 'tuna', nameHe: 'טונה', emoji: '🥫', category: 'green', group: 'protein' },
@@ -59,6 +61,8 @@ export const FOOD_CATALOG: FoodItem[] = [
 
   // ירוק — דגנים מלאים
   { id: 'whole-bread', nameHe: 'לחם מלא', emoji: '🍞', category: 'green', group: 'grain' },
+  { id: 'spelt-bread', nameHe: 'לחם כוסמין', emoji: '🌾', category: 'green', group: 'grain' },
+  { id: 'spelt-bun', nameHe: 'לחמנית כוסמין', emoji: '🥯', category: 'green', group: 'grain' },
   { id: 'oatmeal', nameHe: 'דייסת שיבולת שועל', emoji: '🥣', category: 'green', group: 'grain' },
   { id: 'brown-rice', nameHe: 'אורז מלא', emoji: '🍚', category: 'green', group: 'grain' },
 
