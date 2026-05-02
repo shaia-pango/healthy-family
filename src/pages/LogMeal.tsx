@@ -173,7 +173,10 @@ export function LogMeal() {
           onCancel={() => setPickerItem(null)}
         />
 
-        <div className="fixed bottom-20 inset-x-0 max-w-2xl mx-auto px-4 z-20">
+        <div
+          className="fixed inset-x-0 max-w-2xl mx-auto px-4 z-20"
+          style={{ bottom: 'calc(env(safe-area-inset-bottom) + 5.5rem)' }}
+        >
           <div className="bg-white rounded-3xl shadow-2xl p-3 flex items-center gap-3 border-2 border-brand-200">
             <div className="flex-1">
               <div className="text-xs text-gray-500">סך נקודות</div>
