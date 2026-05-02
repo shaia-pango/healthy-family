@@ -2,8 +2,9 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useFamilyStore } from '../store/familyStore';
-import { FOOD_CATALOG, CATEGORY_LABELS, CATEGORY_EMOJI, type FoodCategory } from '../data/foodCatalog';
+import { FOOD_CATALOG, CATEGORY_LABELS, CATEGORY_EMOJI, type FoodCategory, type FoodItem } from '../data/foodCatalog';
 import { FoodIcon } from '../components/FoodIcon';
+import { QuantityPicker } from '../components/QuantityPicker';
 import { scoreItems } from '../lib/scoring';
 import { PET_EMOJIS, stageForPoints } from '../data/pets';
 import { MEALS, MEAL_EMOJI, type MealType } from '../data/meals';
@@ -19,6 +20,7 @@ export function LogMeal() {
   const [category, setCategory] = useState<FoodCategory>('green');
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [points, setPoints] = useState(0);
+  const [pickerItem, setPickerItem] = useState<FoodItem | null>(null);
 
   const member = members.find((m) => m.id === memberId);
 
@@ -34,16 +36,30 @@ export function LogMeal() {
 
   const livePreview = scoreItems(pickedIds);
 
-  const toggle = (id: string) => {
-    setCounts((c) => ({ ...c, [id]: (c[id] ?? 0) + 1 }));
+  const handleFoodTap = (item: FoodItem) => {
+    if (counts[item.id]) {
+      // already selected — remove entirely
+      setCounts((c) => {
+        const next = { ...c };
+        delete next[item.id];
+        return next;
+      });
+    } else {
+      // open quantity picker
+      setPickerItem(item);
+    }
   };
 
-  const removeOne = (id: string) => {
+  const confirmQuantity = (qty: number) => {
+    if (!pickerItem) return;
+    setCounts((c) => ({ ...c, [pickerItem.id]: qty }));
+    setPickerItem(null);
+  };
+
+  const removeItem = (id: string) => {
     setCounts((c) => {
       const next = { ...c };
-      const cur = (next[id] ?? 0) - 1;
-      if (cur <= 0) delete next[id];
-      else next[id] = cur;
+      delete next[id];
       return next;
     });
   };
@@ -135,10 +151,16 @@ export function LogMeal() {
               item={item}
               count={counts[item.id]}
               selected={!!counts[item.id]}
-              onClick={() => toggle(item.id)}
+              onClick={() => handleFoodTap(item)}
             />
           ))}
         </div>
+
+        <QuantityPicker
+          item={pickerItem}
+          onConfirm={confirmQuantity}
+          onCancel={() => setPickerItem(null)}
+        />
 
         <div className="fixed bottom-20 inset-x-0 max-w-2xl mx-auto px-4 z-20">
           <div className="bg-white rounded-3xl shadow-2xl p-3 flex items-center gap-3 border-2 border-brand-200">
@@ -150,16 +172,21 @@ export function LogMeal() {
               )}
             </div>
             <div className="flex gap-1 max-w-[40%] overflow-x-auto">
-              {pickedIds.slice(0, 6).map((id, i) => {
+              {Object.entries(counts).slice(0, 6).map(([id, n]) => {
                 const food = FOOD_CATALOG.find((f) => f.id === id);
                 return (
                   <button
-                    key={i}
-                    onClick={() => removeOne(id)}
-                    className="text-2xl shrink-0"
+                    key={id}
+                    onClick={() => removeItem(id)}
+                    className="text-2xl shrink-0 relative"
                     title="הסר"
                   >
                     {food?.emoji}
+                    {n > 1 && (
+                      <span className="absolute -top-1 -end-1 text-[10px] bg-brand-500 text-white rounded-full w-4 h-4 grid place-items-center font-bold">
+                        {n}
+                      </span>
+                    )}
                   </button>
                 );
               })}

@@ -1,14 +1,42 @@
+import { useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useFamilyStore } from '../store/familyStore';
 import { PetCanvas } from '../components/PetCanvas';
 import { FOOD_BY_ID } from '../data/foodCatalog';
+import { isInCurrentWeek, todayKey } from '../lib/scoring';
 
 export function Pet() {
   const { memberId } = useParams<{ memberId: string }>();
-  const member = useFamilyStore((s) => s.members.find((m) => m.id === memberId));
-  const todayLogs = useFamilyStore((s) => (memberId ? s.todayLogsFor(memberId) : []));
-  const totalPoints = useFamilyStore((s) => (memberId ? s.totalPointsFor(memberId) : 0));
-  const weeklyPoints = useFamilyStore((s) => (memberId ? s.weeklyPointsFor(memberId) : 0));
+  const members = useFamilyStore((s) => s.members);
+  const logs = useFamilyStore((s) => s.logs);
+
+  const member = useMemo(
+    () => members.find((m) => m.id === memberId),
+    [members, memberId],
+  );
+
+  const memberLogs = useMemo(
+    () => (memberId ? logs.filter((l) => l.memberId === memberId) : []),
+    [logs, memberId],
+  );
+
+  const totalPoints = useMemo(
+    () => memberLogs.reduce((sum, l) => sum + l.pointsEarned, 0),
+    [memberLogs],
+  );
+
+  const weeklyPoints = useMemo(
+    () =>
+      memberLogs
+        .filter((l) => isInCurrentWeek(l.timestamp))
+        .reduce((sum, l) => sum + l.pointsEarned, 0),
+    [memberLogs],
+  );
+
+  const todayLogs = useMemo(() => {
+    const key = todayKey();
+    return memberLogs.filter((l) => l.date === key);
+  }, [memberLogs]);
 
   if (!member) {
     return <div className="p-8 text-center">לא נמצא</div>;
