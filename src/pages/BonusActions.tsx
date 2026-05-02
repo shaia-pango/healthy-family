@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useFamilyStore } from '../store/familyStore';
-import type { BonusTemplate } from '../data/bonusTemplates';
+import { DEFAULT_BONUS_TEMPLATES, type BonusTemplate } from '../data/bonusTemplates';
 
 type Step = 'who' | 'pick' | 'done';
 
@@ -12,18 +12,28 @@ export function BonusActions() {
   const [step, setStep] = useState<Step>('who');
   const [memberId, setMemberId] = useState('');
   const [picked, setPicked] = useState<{ template: BonusTemplate; logId: number } | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const member = members.find((m) => m.id === memberId);
 
+  // אם אין תבניות מהשרת (משפחה ישנה / SETUP.sql לא הורץ), נראה את ברירות המחדל
+  const templates = bonusTemplates.length > 0 ? bonusTemplates : DEFAULT_BONUS_TEMPLATES;
+
   const submit = async (template: BonusTemplate) => {
-    const result = await addBonus({
-      memberId,
-      emoji: template.emoji,
-      label: template.label,
-      points: template.points,
-    });
-    setPicked({ template, logId: result.logId });
-    setStep('done');
+    try {
+      setError(null);
+      const result = await addBonus({
+        memberId,
+        emoji: template.emoji,
+        label: template.label,
+        points: template.points,
+      });
+      setPicked({ template, logId: result.logId });
+      setStep('done');
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'שגיאה';
+      setError(msg);
+    }
   };
 
   if (step === 'who') {
@@ -58,10 +68,18 @@ export function BonusActions() {
           {member?.avatar} {member?.name}
         </h2>
         <p className="text-center text-gray-600 mb-6">איזו פעולה?</p>
+        {error && (
+          <div className="mb-4 bg-rose-50 border-2 border-rose-200 text-rose-700 rounded-2xl p-3 text-sm">
+            {error}
+            <div className="text-xs mt-1 text-rose-600">
+              ייתכן שצריך להריץ את SETUP.sql המעודכן ב-Supabase.
+            </div>
+          </div>
+        )}
         <div className="space-y-2">
-          {bonusTemplates.map((t) => (
+          {templates.map((t, i) => (
             <button
-              key={t.id}
+              key={t.id ?? i}
               onClick={() => submit(t)}
               className="w-full bg-white rounded-2xl p-4 shadow flex items-center gap-4 active:scale-95 transition no-tap-highlight"
             >
