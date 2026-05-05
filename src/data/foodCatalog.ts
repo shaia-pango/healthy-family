@@ -88,6 +88,7 @@ export const FOOD_CATALOG: FoodItem[] = [
   { id: 'tofu', nameHe: 'טופו', emoji: '🍱', category: 'green', group: 'protein' },
   { id: 'lentils', nameHe: 'עדשים', emoji: '🫘', category: 'green', group: 'protein' },
   { id: 'chickpeas', nameHe: 'חומוס גרגירים', emoji: '🫛', category: 'green', group: 'protein' },
+  { id: 'stuffed-pepper-veggie', nameHe: 'פלפל ממולא צמחוני', emoji: '🫑', category: 'green', group: 'protein' },
 
   // ירוק — חלב ותחליפי חלב (שניהם נספרים תחת "חלב" ביעד היומי)
   { id: 'milk', nameHe: 'חלב', emoji: '🥛', category: 'green', group: 'dairy' },
@@ -127,6 +128,7 @@ export const FOOD_CATALOG: FoodItem[] = [
   { id: 'hamburger', nameHe: 'המבורגר', emoji: '🍔', category: 'orange', group: 'protein',
     combos: [{ id: 'bun', label: 'עם לחמנייה' }] },
   { id: 'shawarma', nameHe: 'שווארמה', emoji: '🌯', category: 'orange', group: 'protein' },
+  { id: 'stuffed-pepper-meat', nameHe: 'פלפל ממולא בשרי', emoji: '🫑', category: 'orange', group: 'protein' },
 
   // כתום — חלב
   { id: 'yellow-cheese', nameHe: 'גבינה צהובה', emoji: '🧀', category: 'orange', group: 'dairy' },
